@@ -10,24 +10,24 @@ pipeline {
     stages {
         stage('Clone Source Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/shivshah123/earth-impact-live'
+                git branch: 'main', url: 'https://github.com/shivshah123/earth-impact-live.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('SonarQube Code Quality Scan') {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
-                    sh '''
-                    sonar-scanner \
-                      -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                      -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
-                      -Dsonar.sources=. \
+                    bat '''
+                    sonar-scanner ^
+                      -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+                      -Dsonar.projectName="%SONAR_PROJECT_NAME%" ^
+                      -Dsonar.sources=. ^
                       -Dsonar.exclusions=node_modules/**,terraform/**,coverage/**,*.zip
                     '''
                 }
@@ -36,38 +36,30 @@ pipeline {
 
         stage('Trivy Security Scan') {
             steps {
-                sh '''
-                trivy fs . \
-                  --severity HIGH,CRITICAL \
-                  --ignore-unfixed \
-                  --exit-code 0
+                bat '''
+                trivy fs . --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0
                 '''
             }
         }
 
         stage('Build Application') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'npm test'
+                bat 'npm test'
             }
         }
 
         stage('Package Application') {
             steps {
-                sh '''
-                rm -f ${ARTIFACT_NAME}
+                bat '''
+                if exist %ARTIFACT_NAME% del %ARTIFACT_NAME%
 
-                zip -r ${ARTIFACT_NAME} . \
-                  -x ".git/*" \
-                  -x "node_modules/*" \
-                  -x "terraform/*" \
-                  -x ".env" \
-                  -x "*.zip"
+                powershell -Command "Compress-Archive -Path server.js,package.json,package-lock.json,public,routes,controllers,services,models,config -DestinationPath %ARTIFACT_NAME% -Force"
                 '''
             }
         }
