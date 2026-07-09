@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earth Impact Live</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <h2>🌍 Earth Impact Live</h2>
+    <div class="nav-links">
+      <span>Live Globe</span>
+      <span>Analytics</span>
+      <span>Alerts</span>
+      <span>Monitoring</span>
+    </div>
+  </nav>
+
+  <main>
+    <section class="left-panel">
+      <h1>Real-time Planet.<br><span>Real Impact.</span></h1>
+      <p>Select a country to view environmental indicators.</p>
+
+      <div class="search-box">
+        <select id="countrySelect">
+          <option value="Canada">Canada</option>
+          <option value="India">India</option>
+          <option value="Australia">Australia</option>
+          <option value="United States">United States</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="Brazil">Brazil</option>
+          <option value="Japan">Japan</option>
+        </select>
+        <button onclick="loadCountryData()">View Impact</button>
+      </div>
+
+      <div class="card">🌡 Temperature: <b id="temperature">Loading...</b></div>
+      <div class="card">🌬 Air Quality: <b id="aqi">Loading...</b></div>
+      <div class="card">💧 Humidity: <b id="humidity">Loading...</b></div>
+      <div class="card">🌪 Wind Speed: <b id="wind">Loading...</b></div>
+    </section>
+
+    <section class="globe-section">
+      <div class="globe"></div>
+      <p class="globe-text">Interactive Global Environment View</p>
+    </section>
+
+    <section class="right-panel">
+      <h3 id="countryName">Country Overview</h3>
+      <p>🌲 Forest Risk: <b id="forestRisk">Moderate</b></p>
+      <p>🔥 Disaster Alerts: <b id="disasters">Loading...</b></p>
+      <p>🌊 Sea Level Risk: <b id="seaLevel">Medium</b></p>
+      <p>☀ Climate Status: <b id="climate">Changing</b></p>
+
+      <h3>Application Status</h3>
+      <p>/health endpoint enabled</p>
+      <p>/metrics endpoint enabled</p>
+    </section>
+  </main>
+
+  <footer>
+    DevSecOps: Jenkins | Terraform | Azure App Service | SonarQube | Trivy | Prometheus | Grafana
+  </footer>
+
+  <script src="globe.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

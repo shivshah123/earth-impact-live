@@ -1,0 +1,101 @@
+body {
+  margin: 0;
+  background: radial-gradient(circle at center, #063b5c, #020812 70%);
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+nav h2 {
+  color: #55ff77;
+}
+
+.nav-links span {
+  margin-left: 25px;
+  color: #d9f6ff;
+}
+
+main {
+  display: flex;
+  justify-content: space-between;
+  padding: 45px;
+  gap: 30px;
+}
+
+.left-panel, .right-panel {
+  width: 28%;
+}
+
+h1 {
+  font-size: 44px;
+  line-height: 1.1;
+}
+
+h1 span {
+  color: #55ff77;
+}
+
+.search-box {
+  margin: 25px 0;
+}
+
+select, button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #55ff77;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.card, .right-panel {
+  background: rgba(0, 35, 60, 0.78);
+  padding: 18px;
+  margin: 14px 0;
+  border-radius: 12px;
+  border: 1px solid #1f6d91;
+}
+
+.globe-section {
+  width: 44%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.globe {
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg");
+  background-size: cover;
+  box-shadow: 0 0 85px #00c8ff;
+  animation: rotateGlobe 18s linear infinite;
+}
+
+.globe-text {
+  color: #bcefff;
+  margin-top: 20px;
+}
+
+@keyframes rotateGlobe {
+  from { background-position: 0 0; }
+  to { background-position: 840px 0; }
+}
+
+footer {
+  text-align: center;
+  padding: 18px;
+  color: #bcefff;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}

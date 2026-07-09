@@ -1,0 +1,6 @@
+subscription_id  = "your-subscription-id"
+mongo_uri        = "mongodb+srv://username:password@cluster.mongodb.net/earthimpact"
+unique_suffix    = "shiv2026au"
+location         = "Australia East"
+app_service_sku  = "B1"
+always_on        = true

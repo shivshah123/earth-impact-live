@@ -1,0 +1,18 @@
+{
+  "name": "earth-impact-live",
+  "version": "1.0.0",
+  "description": "Cloud-native environmental monitoring platform with Azure App Service, Jenkins CI/CD, SonarQube, Trivy, Prometheus and Grafana.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo Build completed successfully",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "prom-client": "^15.1.3"
+  }
+}

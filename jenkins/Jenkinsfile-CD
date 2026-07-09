@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        RESOURCE_GROUP = "rg-earth-impact-live"
+        WEB_APP_NAME   = "earth-impact-live-12345"
+        ARTIFACT_NAME  = "earth-impact-live.zip"
+    }
+
+    stages {
+        stage('Retrieve Artifact') {
+            steps {
+                copyArtifacts(
+                    projectName: 'earth-impact-ci',
+                    selector: lastSuccessful(),
+                    filter: "${ARTIFACT_NAME}"
+                )
+            }
+        }
+
+        stage('Azure Login') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'AZURE_CLIENT_ID', variable: 'AZURE_CLIENT_ID'),
+                    string(credentialsId: 'AZURE_CLIENT_SECRET', variable: 'AZURE_CLIENT_SECRET'),
+                    string(credentialsId: 'AZURE_TENANT_ID', variable: 'AZURE_TENANT_ID'),
+                    string(credentialsId: 'AZURE_SUBSCRIPTION_ID', variable: 'AZURE_SUBSCRIPTION_ID')
+                ]) {
+                    sh '''
+                    az login --service-principal                       -u $AZURE_CLIENT_ID                       -p $AZURE_CLIENT_SECRET                       --tenant $AZURE_TENANT_ID
+
+                    az account set --subscription $AZURE_SUBSCRIPTION_ID
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Azure App Service') {
+            steps {
+                sh '''
+                az webapp deploy                   --resource-group ${RESOURCE_GROUP}                   --name ${WEB_APP_NAME}                   --src-path ${ARTIFACT_NAME}                   --type zip
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                sleep 30
+                curl -f https://${WEB_APP_NAME}.azurewebsites.net/health
+                '''
+            }
+        }
+    }
+}

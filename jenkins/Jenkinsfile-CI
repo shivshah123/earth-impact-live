@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+
+    environment {
+        ARTIFACT_NAME = "earth-impact-live.zip"
+        SONAR_PROJECT_KEY = "earth-impact-live"
+        SONAR_PROJECT_NAME = "Earth Impact Live"
+    }
+
+    stages {
+        stage('Clone Source Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/shivshah123/earth-impact-live'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('SonarQube Code Quality Scan') {
+            steps {
+                withSonarQubeEnv('SonarQube-Server') {
+                    sh '''
+                    sonar-scanner \
+                      -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                      -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
+                      -Dsonar.sources=. \
+                      -Dsonar.exclusions=node_modules/**,terraform/**,coverage/**,*.zip
+                    '''
+                }
+            }
+        }
+
+        stage('Trivy Security Scan') {
+            steps {
+                sh '''
+                trivy fs . \
+                  --severity HIGH,CRITICAL \
+                  --ignore-unfixed \
+                  --exit-code 0
+                '''
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm test'
+            }
+        }
+
+        stage('Package Application') {
+            steps {
+                sh '''
+                rm -f ${ARTIFACT_NAME}
+
+                zip -r ${ARTIFACT_NAME} . \
+                  -x ".git/*" \
+                  -x "node_modules/*" \
+                  -x "terraform/*" \
+                  -x ".env" \
+                  -x "*.zip"
+                '''
+            }
+        }
+
+        stage('Publish Artifact') {
+            steps {
+                archiveArtifacts artifacts: "${ARTIFACT_NAME}", fingerprint: true
+            }
+        }
+    }
+}

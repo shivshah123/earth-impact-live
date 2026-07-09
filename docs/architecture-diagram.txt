@@ -1,0 +1,22 @@
+Architecture Diagram Placeholder
+
+GitHub
+  -> Jenkins CI
+    -> npm install
+    -> SonarQube Scan
+    -> Trivy Scan
+    -> Build and Test
+    -> Archive ZIP Artifact
+  -> Jenkins CD
+    -> Azure Login
+    -> Deploy to Azure App Service
+    -> Verify /health
+
+Azure App Service
+  -> Node.js Express App
+  -> MongoDB Atlas
+  -> /health endpoint
+  -> /metrics endpoint
+
+Prometheus scrapes /metrics
+Grafana visualizes Prometheus metrics
