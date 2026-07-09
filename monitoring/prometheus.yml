@@ -1,10 +1,27 @@
 global:
   scrape_interval: 15s
+  evaluation_interval: 15s
 
 scrape_configs:
   - job_name: "earth-impact-live"
-    metrics_path: "/metrics"
-    scheme: "https"
+
+    scheme: https
+
+    metrics_path: /metrics
+
+    scrape_interval: 15s
+
     static_configs:
       - targets:
-          - "earth-impact-live-12345.azurewebsites.net"
+          - earth-impact-live-12345.azurewebsites.net
+
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: earth-impact-live-azure
+
+      - target_label: application
+        replacement: earth-impact-live
+
+      - target_label: environment
+        replacement: production

@@ -6,7 +6,8 @@ client.collectDefaultMetrics({
 
 const httpRequestCounter = new client.Counter({
   name: "earth_impact_live_http_requests_total",
-  help: "Total number of HTTP requests"
+  help: "Total number of HTTP requests",
+  labelNames: ["method", "route"]
 });
 
 module.exports = client;

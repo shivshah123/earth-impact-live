@@ -4,6 +4,8 @@ const express = require("express");
 const path = require("path");
 
 const connectDB = require("./config/database");
+const { httpRequestCounter } = require("./config/prometheus");
+
 const healthRoute = require("./routes/health");
 const metricsRoute = require("./routes/metrics");
 const environmentRoute = require("./routes/environment");
@@ -16,6 +18,15 @@ connectDB();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+
+// Prometheus request counter middleware
+app.use((req, res, next) => {
+  httpRequestCounter.inc({
+    method: req.method,
+    route: req.path
+  });
+  next();
+});
 
 app.use("/health", healthRoute);
 app.use("/metrics", metricsRoute);
