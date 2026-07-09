@@ -26,10 +26,13 @@ pipeline {
                     string(credentialsId: 'AZURE_TENANT_ID', variable: 'AZURE_TENANT_ID'),
                     string(credentialsId: 'AZURE_SUBSCRIPTION_ID', variable: 'AZURE_SUBSCRIPTION_ID')
                 ]) {
-                    sh '''
-                    az login --service-principal                       -u $AZURE_CLIENT_ID                       -p $AZURE_CLIENT_SECRET                       --tenant $AZURE_TENANT_ID
+                    bat '''
+                    az login --service-principal ^
+                      -u %AZURE_CLIENT_ID% ^
+                      -p %AZURE_CLIENT_SECRET% ^
+                      --tenant %AZURE_TENANT_ID%
 
-                    az account set --subscription $AZURE_SUBSCRIPTION_ID
+                    az account set --subscription %AZURE_SUBSCRIPTION_ID%
                     '''
                 }
             }
@@ -37,17 +40,32 @@ pipeline {
 
         stage('Deploy to Azure App Service') {
             steps {
-                sh '''
-                az webapp deploy                   --resource-group ${RESOURCE_GROUP}                   --name ${WEB_APP_NAME}                   --src-path ${ARTIFACT_NAME}                   --type zip
+                bat '''
+                az webapp config appsettings set ^
+                  --resource-group %RESOURCE_GROUP% ^
+                  --name %WEB_APP_NAME% ^
+                  --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true ENABLE_ORYX_BUILD=true PORT=8080
+
+                az webapp deploy ^
+                  --resource-group %RESOURCE_GROUP% ^
+                  --name %WEB_APP_NAME% ^
+                  --src-path %ARTIFACT_NAME% ^
+                  --type zip
+
+                az webapp restart ^
+                  --resource-group %RESOURCE_GROUP% ^
+                  --name %WEB_APP_NAME%
                 '''
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                sh '''
-                sleep 30
-                curl -f https://${WEB_APP_NAME}.azurewebsites.net/health
+                bat '''
+                timeout /t 30 /nobreak
+                curl -f https://%WEB_APP_NAME%.azurewebsites.net/health
+                curl -f https://%WEB_APP_NAME%.azurewebsites.net/metrics
+                curl -f https://%WEB_APP_NAME%.azurewebsites.net/api/environment/Canada
                 '''
             }
         }
