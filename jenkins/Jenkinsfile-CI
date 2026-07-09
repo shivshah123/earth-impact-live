@@ -38,12 +38,15 @@ pipeline {
 }
 
         stage('Trivy Security Scan') {
-            steps {
-                bat '''
-                trivy fs . --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0
-                '''
-            }
-        }
+    steps {
+        bat '''
+        "C:\\Users\\vishv\\AppData\\Local\\Microsoft\\WinGet\\Packages\\AquaSecurity.Trivy_Microsoft.Winget.Source_8wekyb3d8bbwe\\trivy.exe" fs . ^
+          --severity HIGH,CRITICAL ^
+          --ignore-unfixed ^
+          --exit-code 0
+        '''
+    }
+}
 
         stage('Build Application') {
             steps {
