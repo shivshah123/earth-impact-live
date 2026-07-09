@@ -60,16 +60,24 @@ pipeline {
             }
         }
 
-        stage('Package Application') {
-            steps {
-                bat '''
-                if exist %ARTIFACT_NAME% del %ARTIFACT_NAME%
+       stage('Package Application') {
+    steps {
+        bat '''
+        if exist earth-impact-live.zip del earth-impact-live.zip
 
-                powershell -Command "Compress-Archive -Path server.js,package.json,package-lock.json,public,routes,controllers,services,models,config -DestinationPath %ARTIFACT_NAME% -Force"
-                '''
-            }
-        }
-
+        tar.exe -a -c -f earth-impact-live.zip ^
+        server.js ^
+        package.json ^
+        package-lock.json ^
+        public ^
+        routes ^
+        controllers ^
+        services ^
+        models ^
+        config
+        '''
+    }
+}
         stage('Publish Artifact') {
             steps {
                 archiveArtifacts artifacts: "${ARTIFACT_NAME}", fingerprint: true
