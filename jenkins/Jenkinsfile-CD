@@ -11,10 +11,10 @@ pipeline {
         stage('Retrieve Artifact') {
             steps {
                 copyArtifacts(
-                    projectName: 'earth-impact-ci',
-                    selector: lastSuccessful(),
-                    filter: "${ARTIFACT_NAME}"
-                )
+    projectName: 'earth-impact-live-CI',
+    selector: upstream(),
+    filter: "${ARTIFACT_NAME}"
+)
             }
         }
 
