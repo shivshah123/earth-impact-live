@@ -21,18 +21,21 @@ pipeline {
         }
 
         stage('SonarQube Code Quality Scan') {
-            steps {
-                withSonarQubeEnv('SonarQube-Server') {
-                    bat '''
-                    sonar-scanner ^
-                      -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
-                      -Dsonar.projectName="%SONAR_PROJECT_NAME%" ^
-                      -Dsonar.sources=. ^
-                      -Dsonar.exclusions=node_modules/**,terraform/**,coverage/**,*.zip
-                    '''
-                }
+    steps {
+        script {
+            def scannerHome = tool 'SonarScanner'
+            withSonarQubeEnv('SonarQube-Server') {
+                bat """
+                "${scannerHome}\\bin\\sonar-scanner.bat" ^
+                  -Dsonar.projectKey=%SONAR_PROJECT_KEY% ^
+                  -Dsonar.projectName="%SONAR_PROJECT_NAME%" ^
+                  -Dsonar.sources=. ^
+                  -Dsonar.exclusions=node_modules/**,terraform/**,coverage/**,*.zip
+                """
             }
         }
+    }
+}
 
         stage('Trivy Security Scan') {
             steps {
