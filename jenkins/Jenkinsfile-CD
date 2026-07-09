@@ -8,13 +8,23 @@ pipeline {
     }
 
     stages {
-        stage('Retrieve Artifact') {
+
+        stage('Package Application') {
             steps {
-                copyArtifacts(
-    projectName: 'earth-impact-live-CI',
-    selector: upstream(),
-    filter: "${ARTIFACT_NAME}"
-)
+                bat '''
+                if exist %ARTIFACT_NAME% del %ARTIFACT_NAME%
+
+                tar.exe -a -c -f %ARTIFACT_NAME% ^
+                  server.js ^
+                  package.json ^
+                  package-lock.json ^
+                  public ^
+                  routes ^
+                  controllers ^
+                  services ^
+                  models ^
+                  config
+                '''
             }
         }
 
@@ -63,6 +73,7 @@ pipeline {
             steps {
                 bat '''
                 timeout /t 30 /nobreak
+
                 curl -f https://%WEB_APP_NAME%.azurewebsites.net/health
                 curl -f https://%WEB_APP_NAME%.azurewebsites.net/metrics
                 curl -f https://%WEB_APP_NAME%.azurewebsites.net/api/environment/Canada
