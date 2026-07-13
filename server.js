@@ -16,22 +16,17 @@ const PORT = process.env.PORT || 8080;
 
 connectDB();
 
-app.use(express.json());
-
-// Prometheus request counter middleware
-// Keep this before static files and application routes.
+// Prometheus request counter — keep before all middleware and routes
 app.use((req, res, next) => {
-  res.on("finish", () => {
-    httpRequestCounter.inc({
-      method: req.method,
-      route: req.path,
-      status_code: String(res.statusCode)
-    });
-  });
+  httpRequestCounter
+    .labels(req.method, req.path)
+    .inc();
 
+  console.log(`Prometheus counted: ${req.method} ${req.path}`);
   next();
 });
 
+app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/health", healthRoute);
